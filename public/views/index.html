@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <?php include __DIR__ . '/partials/head.html'; ?>
+    <title><?= $title; ?></title>
+  </head>
+  <body>
+    <?php include __DIR__ . '/partials/nav.html'; ?>
+
+    <div class="page-layout container">
+      <aside>
+        <h2><i class="fa-solid fa-filter"></i> Filters</h2>
+        <ul>
+          <li><a href="#">All Projects</a></li>
+          <li><a href="#">My Projects</a></li>
+          <li><a href="#">In Progress</a></li>
+          <li><a href="#">Completed</a></li>
+        </ul>
+        <div class="display-mobile">
+          <h2><i class="fa-solid fa-bars"></i> Menu</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/dashboard">Profile</a></li>
+            <li><a href="/dashboard">Add Project</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <main>
+        <h1>Projects</h1>
+        <div class="cards">
+          <div class="card">
+            <i class="fa-solid fa-diagram-project"></i>
+            <h3>Project Alpha</h3>
+            <p>In progress</p>
+          </div>
+          <div class="card">
+            <i class="fa-solid fa-diagram-project"></i>
+            <h3>Project Beta</h3>
+            <p>Completed</p>
+          </div>
+          <div class="card">
+            <i class="fa-solid fa-diagram-project"></i>
+            <h3>Project Gamma</h3>
+            <p>Planned</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2026 WdPAI App</p>
+      </div>
+    </footer>
+  </body>
+</html>
