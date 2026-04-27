@@ -24,6 +24,10 @@ class Routing {
             "controller" => "SecurityController",
             "action" => "login"
         ],
+        "register" => [
+            "controller" => "SecurityController",
+            "action" => "register"
+        ],
     ];
 
     public static function run(string $path) {
@@ -33,21 +37,12 @@ class Routing {
             return;
         }
 
-        switch($path) {
-            case 'dashboard':
-            case '':
-            case 'login':
-                $controller = Routing::$routes[$path]["controller"];
-                $action = Routing::$routes[$path]["action"];
+        $controller = Routing::$routes[$path]["controller"];
+        $action = Routing::$routes[$path]["action"];
 
-                $controllerObj = $controller::getInstance();
-                $id = null;
+        $controllerObj = $controller::getInstance();
+        $id = null;
 
-                $controllerObj->$action($id);
-                break; 
-            default:
-                include 'public/views/404.html';
-                break;
-        }
+        $controllerObj->$action($id);
     }
 }
