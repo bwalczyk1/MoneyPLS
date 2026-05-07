@@ -28,7 +28,6 @@ class SecurityController extends AppController {
             return $this->render('login', ['messages' => 'Fill all fields']);
         }
 
-       //TODO get from database user with given email
         $usersRepository = new UsersRepository();
         $user = $usersRepository->getUserByEmail($email);
       
@@ -60,7 +59,6 @@ class SecurityController extends AppController {
             return $this->render('register', ['messages' => 'Fill all fields']);
         }
 
-	    // TODO check if user exists
         $usersRepository = new UsersRepository();
         $existingUser = $usersRepository->getUserByEmail($email);
 
