@@ -35,12 +35,12 @@ class SecurityController extends AppController {
             return $this->render('login', ['messages' => 'User not found']);
         }
 
-        if (!password_verify($password, $user['password'])) {
+        if (!password_verify($password, $user->password)) {
             return $this->render('login', ['messages' => 'Wrong password']);
         }
 
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['user_id'] = $user->id;
+        $_SESSION['username'] = $user->username;
 
         $url = "http://$_SERVER[HTTP_HOST]";
         header("Location: {$url}/dashboard");
@@ -68,7 +68,6 @@ class SecurityController extends AppController {
 
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        // todo insert user to dabase
         $usersRepository->createUser($email, $hashedPassword, $username);
 
         $url = "http://$_SERVER[HTTP_HOST]";

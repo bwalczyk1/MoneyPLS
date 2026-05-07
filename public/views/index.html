@@ -29,14 +29,14 @@
       <main>
         <h1>Users</h1>
         <div class="user-list">
-          <?php foreach($users as $key=>$value): ?>
+          <?php foreach($users as $user): ?>
             <div class="user-item">
               <div class="user-avatar">
                 <i class="fa-solid fa-user"></i>
               </div>
               <div class="user-info">
-                <span class="user-name"><?= $value["username"]; ?></span>
-                <span class="user-email"><?= $value["email"]; ?></span>
+                <span class="user-name"><?= $user->username; ?></span>
+                <span class="user-email"><?= $user->email; ?></span>
               </div>
             </div>
           <?php endforeach; ?>
