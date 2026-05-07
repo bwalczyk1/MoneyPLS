@@ -3,12 +3,6 @@
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
 
-// TODO musimy zapewnic, ze utworzony 
-// obiekt kontrollera ma tylko jedna instancję - SINGLETON
-
-// TODO 2 /dashboard -- wszystkei dnae
-// /dashboard/12234 -- wyciagnie nam jakis elemtn o wskaznaym ID 12234
-// REGEX
 class Routing {
 
     public static $routes = [
@@ -30,19 +24,31 @@ class Routing {
         ],
     ];
 
-    public static function run(string $path) {
-        if (!array_key_exists($path, Routing::$routes)) {
-            include 'public/views/404.html';
+    public static $dynamicRoutes = [
+        '#^dashboard/(\d+)$#' => [
+            "controller" => "DashboardController",
+            "action" => "index"
+        ],
+    ];
 
+    public static function run(string $path) {
+        if (array_key_exists($path, Routing::$routes)) {
+            $controller = Routing::$routes[$path]["controller"];
+            $action = Routing::$routes[$path]["action"];
+            $controller::getInstance()->$action(null);
             return;
         }
 
-        $controller = Routing::$routes[$path]["controller"];
-        $action = Routing::$routes[$path]["action"];
+        foreach (Routing::$dynamicRoutes as $pattern => $route) {
+            if (preg_match($pattern, $path, $matches)) {
+                $id = $matches[1];
+                $controller = $route["controller"];
+                $action = $route["action"];
+                $controller::getInstance()->$action($id);
+                return;
+            }
+        }
 
-        $controllerObj = $controller::getInstance();
-        $id = null;
-
-        $controllerObj->$action($id);
+        include 'public/views/404.html';
     }
 }
