@@ -14,7 +14,13 @@ class DashboardController extends AppController {
         return self::$instance;
     }
 
-    public function index() {
+    public function index($id = null) {
+        if (empty($_SESSION['user_id'])) {
+            $url = "http://$_SERVER[HTTP_HOST]";
+            header("Location: {$url}/login");
+            return;
+        }
+
         $title = "INDEX";
 
         $usersRepository = new UsersRepository();

@@ -40,8 +40,8 @@ class SecurityController extends AppController {
             return $this->render('login', ['messages' => 'Wrong password']);
         }
 
-        // TODO możemy przechowywać sesje użytkowika lub token
-        // setcookie("username", $user['email'], time() + 3600, '/');
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
 
         $url = "http://$_SERVER[HTTP_HOST]";
         header("Location: {$url}/dashboard");
