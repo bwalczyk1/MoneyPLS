@@ -1,44 +1,37 @@
 <?php
-// .env 
 require_once "config.php";
 
-// singleton 
 class Database {
-    private $username;
-    private $password;
-    private $host;
-    private $database;
-    // private $conn;
+    private static ?Database $instance = null;
+    private ?PDO $conn = null;
 
-    public function __construct()
-    {
-        $this->username = USERNAME;
-        $this->password = PASSWORD;
-        $this->host = HOST;
-        $this->database = DATABASE;
+    private function __construct() {}
+
+    public static function getInstance(): Database {
+        if (is_null(self::$instance)) {
+            self::$instance = new Database();
+        }
+        return self::$instance;
     }
 
-    public function connect()
-    {
-        try {
-            $conn = new PDO(
-                "pgsql:host=$this->host;port=5432;dbname=$this->database",
-                $this->username,
-                $this->password,
-                ["sslmode"  => "prefer"]
-            );
-
-            // set the PDO error mode to exception
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $conn;
+    public function connect(): PDO {
+        if ($this->conn === null) {
+            try {
+                $this->conn = new PDO(
+                    "pgsql:host=" . HOST . ";port=5432;dbname=" . DATABASE,
+                    USERNAME,
+                    PASSWORD,
+                    ["sslmode" => "prefer"]
+                );
+                $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                die("Connection failed: " . $e->getMessage());
+            }
         }
-        catch(PDOException $e) {
-            // change to error page e.g. 404 not found etc.
-            die("Connection failed: " . $e->getMessage());
-        }
+        return $this->conn;
     }
 
-    public function disconnect() {
-        // $this->conn = null;
+    public function disconnect(): void {
+        $this->conn = null;
     }
 }
