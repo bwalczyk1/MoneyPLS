@@ -15,17 +15,10 @@ class DashboardController extends AppController {
     }
 
     public function index($id = null) {
-        if (empty($_SESSION['user_id'])) {
-            $url = "http://$_SERVER[HTTP_HOST]";
-            header("Location: {$url}/login");
-            return;
-        }
+        $this->requireAuth();
 
-        $title = "INDEX";
+        $userId = $_SESSION['user_id'];
 
-        $usersRepository = new UsersRepository();
-        $users = $usersRepository->getUsers();
-
-        return $this->render("index", ["title" => $title, "users" => $users]);
+        return $this->render('dashboard', ['userId' => $userId]);
     }
 }

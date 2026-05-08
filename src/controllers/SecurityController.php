@@ -16,61 +16,64 @@ class SecurityController extends AppController {
 
     public function login() {
         if (!$this->isPost()) {
-            return $this->render('login');
+            return $this->render('auth', ['mode' => 'login']);
         }
 
-        $email = $_POST["email"] ?? '';
-        $password = $_POST["password"] ?? '';
-
-        // var_dump($email);
+        $email    = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            return $this->render('login', ['messages' => 'Fill all fields']);
+            return $this->render('auth', ['mode' => 'login', 'error' => 'Fill all fields']);
         }
 
-        $usersRepository = new UsersRepository();
-        $user = $usersRepository->getUserByEmail($email);
-      
-        if (!$user) {
-            return $this->render('login', ['messages' => 'User not found']);
+        $repo = new UsersRepository();
+        $user = $repo->getUserByEmail($email);
+
+        if (!$user || !password_verify($password, $user->password)) {
+            return $this->render('auth', ['mode' => 'login', 'error' => 'Invalid email or password']);
         }
 
-        if (!password_verify($password, $user->password)) {
-            return $this->render('login', ['messages' => 'Wrong password']);
-        }
-
-        $_SESSION['user_id'] = $user->id;
+        $_SESSION['user_id']  = $user->id;
         $_SESSION['username'] = $user->username;
 
-        $url = "http://$_SERVER[HTTP_HOST]";
-        header("Location: {$url}/dashboard");
+        $this->redirect('dashboard');
     }
 
     public function register() {
         if (!$this->isPost()) {
-            return $this->render('register');
+            return $this->render('auth', ['mode' => 'register']);
         }
 
-        $email = trim($_POST['email'] ?? '');
+        $email    = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
-        $username = $_POST['username'] ?? '';
+        $password2 = $_POST['password2'] ?? '';
+        $username = trim($_POST['username'] ?? '');
 
         if (empty($email) || empty($password) || empty($username)) {
-            return $this->render('register', ['messages' => 'Fill all fields']);
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Fill all fields']);
         }
 
-        $usersRepository = new UsersRepository();
-        $existingUser = $usersRepository->getUserByEmail($email);
-
-        if (!empty($existingUser)) {
-            return $this->render('register', ['messages' => 'Email already used']);
+        if ($password !== $password2) {
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Passwords do not match']);
         }
 
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        if (strlen($password) < 8) {
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Password must be at least 8 characters']);
+        }
 
-        $usersRepository->createUser($email, $hashedPassword, $username);
+        $repo = new UsersRepository();
+        if ($repo->getUserByEmail($email)) {
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Email already in use']);
+        }
 
-        $url = "http://$_SERVER[HTTP_HOST]";
-        header("Location: {$url}/login");
+        $repo->createUser($email, password_hash($password, PASSWORD_BCRYPT), $username);
+
+        $this->redirect('login');
+    }
+
+    public function logout() {
+        $_SESSION = [];
+        session_destroy();
+        $this->redirect('login');
     }
 }

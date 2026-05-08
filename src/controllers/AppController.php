@@ -1,40 +1,46 @@
 <?php
 
-
 class AppController {
     protected static ?AppController $instance = null;
 
-    protected function __construct() {
+    protected function __construct() {}
+
+    protected function isGet(): bool {
+        return $_SERVER['REQUEST_METHOD'] === 'GET';
     }
 
-    protected function isGet(): bool
-    {
-        return $_SERVER["REQUEST_METHOD"] === 'GET';
+    protected function isPost(): bool {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
-    protected function isPost(): bool
-    {
-        return $_SERVER["REQUEST_METHOD"] === 'POST';
+    protected function requireAuth(): void {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
     }
- 
-    protected function render(string $template = null, array $variables = [])
-    {
-        $templatePath = 'public/views/'. $template.'.html';
-        $templatePath404 = 'public/views/404.html';
-        $output = "";
-                 
-        if(file_exists($templatePath)){
+
+    protected function redirect(string $path): void {
+        header("Location: http://{$_SERVER['HTTP_HOST']}/{$path}");
+        exit;
+    }
+
+    protected function render(string $template, array $variables = []): void {
+        $templatePath = 'public/views/' . $template . '.html';
+
+        if (file_exists($templatePath)) {
             extract($variables);
-            
             ob_start();
             include $templatePath;
-            $output = ob_get_clean();
+            echo ob_get_clean();
         } else {
             ob_start();
-            include $templatePath404;
-            $output = ob_get_clean();
+            include 'public/views/404.html';
+            echo ob_get_clean();
         }
-        echo $output;
     }
+}
 
+function h(mixed $value): string {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
