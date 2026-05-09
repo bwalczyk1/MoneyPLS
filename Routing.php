@@ -1,20 +1,21 @@
 <?php
 
+require_once 'src/controllers/LandingController.php';
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
+require_once 'src/controllers/GroupsController.php';
+require_once 'src/controllers/ExpensesController.php';
+require_once 'src/controllers/SettleUpController.php';
+require_once 'src/controllers/ActivityController.php';
 
 class Routing {
 
     public static $routes = [
-        "login" => [
-            "controller" => "SecurityController",
-            "action" => "login"
-        ],
-        "dashboard" => [
-            "controller" => "DashboardController",
+        "" => [
+            "controller" => "LandingController",
             "action" => "index"
         ],
-        "" => [
+        "login" => [
             "controller" => "SecurityController",
             "action" => "login"
         ],
@@ -22,29 +23,61 @@ class Routing {
             "controller" => "SecurityController",
             "action" => "register"
         ],
-    ];
-
-    public static $dynamicRoutes = [
-        '#^dashboard/(\d+)$#' => [
+        "logout" => [
+            "controller" => "SecurityController",
+            "action" => "logout"
+        ],
+        "dashboard" => [
             "controller" => "DashboardController",
+            "action" => "index"
+        ],
+        "groups" => [
+            "controller" => "GroupsController",
+            "action" => "index"
+        ],
+        "groups/create" => [
+            "controller" => "GroupsController",
+            "action" => "create"
+        ],
+        "activity" => [
+            "controller" => "ActivityController",
             "action" => "index"
         ],
     ];
 
-    public static function run(string $path) {
-        if (array_key_exists($path, Routing::$routes)) {
-            $controller = Routing::$routes[$path]["controller"];
-            $action = Routing::$routes[$path]["action"];
-            $controller::getInstance()->$action(null);
+    public static $dynamicRoutes = [
+        '#^groups/(\d+)/expenses/add$#' => [
+            "controller" => "ExpensesController",
+            "action" => "create"
+        ],
+        '#^groups/(\d+)/settle/pay$#' => [
+            "controller" => "SettleUpController",
+            "action" => "pay"
+        ],
+        '#^groups/(\d+)/settle$#' => [
+            "controller" => "SettleUpController",
+            "action" => "index"
+        ],
+        '#^groups/(\d+)/balances$#' => [
+            "controller" => "GroupsController",
+            "action" => "showBalances"
+        ],
+        '#^groups/(\d+)$#' => [
+            "controller" => "GroupsController",
+            "action" => "show"
+        ],
+    ];
+
+    public static function run(string $path): void {
+        if (array_key_exists($path, self::$routes)) {
+            $route = self::$routes[$path];
+            $route['controller']::getInstance()->{$route['action']}(null);
             return;
         }
 
-        foreach (Routing::$dynamicRoutes as $pattern => $route) {
+        foreach (self::$dynamicRoutes as $pattern => $route) {
             if (preg_match($pattern, $path, $matches)) {
-                $id = $matches[1];
-                $controller = $route["controller"];
-                $action = $route["action"];
-                $controller::getInstance()->$action($id);
+                $route['controller']::getInstance()->{$route['action']}($matches[1]);
                 return;
             }
         }
