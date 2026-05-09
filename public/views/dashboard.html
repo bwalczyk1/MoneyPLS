@@ -1,12 +1,79 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DASHBOARD</title>
-  </head>
-  <body>
-    <?php include __DIR__ . '/partials/nav.html'; ?>
-    <h1>DASHBOARD</h1>
-  </body>
+<head><?php include __DIR__ . '/partials/head.html'; ?></head>
+<body class="app-body">
+
+<?php include __DIR__ . '/partials/topbar.html'; ?>
+
+<div class="app-shell">
+  <?php include __DIR__ . '/partials/sidebar.html'; ?>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-sub">Welcome back, <?= h($username) ?></p>
+    </div>
+
+    <!-- Balance cards -->
+    <div class="balance-grid">
+      <div class="balance-card balance-card--total">
+        <span class="balance-card__label">Total Balance</span>
+        <span class="balance-card__amount <?= $balance['total'] >= 0 ? 'amount--positive' : 'amount--negative' ?>">
+          <?= $balance['total'] >= 0 ? '+' : '' ?><?= h(number_format($balance['total'], 2)) ?>
+        </span>
+      </div>
+      <div class="balance-card balance-card--owed">
+        <span class="balance-card__label">You Are Owed</span>
+        <span class="balance-card__amount amount--positive">
+          +<?= h(number_format($balance['owed_to_user'], 2)) ?>
+        </span>
+      </div>
+      <div class="balance-card balance-card--owe">
+        <span class="balance-card__label">You Owe</span>
+        <span class="balance-card__amount amount--negative">
+          -<?= h(number_format($balance['user_owes'], 2)) ?>
+        </span>
+      </div>
+    </div>
+
+    <!-- Active groups -->
+    <div class="section-header">
+      <h2 class="section-title">Active Groups</h2>
+      <a href="/groups" class="section-link">View all</a>
+    </div>
+
+    <?php if (empty($groupsData)): ?>
+      <div class="empty-state">
+        <p>No groups yet.</p>
+        <a href="/groups/create" class="btn btn--primary">Create a group</a>
+      </div>
+    <?php else: ?>
+      <div class="groups-grid">
+        <?php foreach ($groupsData as $gd):
+          $group   = $gd['group'];
+          $members = $gd['members'];
+          $userNet = $gd['userNet'];
+        ?>
+        <a href="/groups/<?= h($group->id) ?>" class="group-card">
+          <div class="group-card__icon group-card__icon--<?= h($group->category) ?>">
+            <?php
+              $icons = ['travel'=>'✈','food'=>'🍔','rent'=>'🏠','entertainment'=>'🎬','general'=>'💼','other'=>'📦'];
+              echo $icons[$group->category] ?? '💼';
+            ?>
+          </div>
+          <div class="group-card__body">
+            <span class="group-card__name"><?= h($group->name) ?></span>
+            <span class="group-card__meta"><?= count($members) ?> member<?= count($members) !== 1 ? 's' : '' ?></span>
+          </div>
+          <div class="group-card__balance <?= $userNet >= 0 ? 'balance--owed' : 'balance--owe' ?>">
+            <?= $userNet >= 0 ? '+' : '' ?><?= h(number_format($userNet, 2)) ?>
+          </div>
+        </a>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </main>
+</div>
+
+</body>
 </html>
