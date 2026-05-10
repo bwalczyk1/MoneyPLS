@@ -28,11 +28,16 @@ class UsersRepository extends Repository {
         return $row ? User::fromArray($row) : null;
     }
 
-    public function createUser(string $email, string $hashedPassword, string $username): void
-    {
+    public function createUser(
+        string $email,
+        string $hashedPassword,
+        string $username,
+        string $fullName = '',
+    ): void {
         $query = $this->database->connect()->prepare(
-            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
+            "INSERT INTO users (username, email, password, full_name) VALUES (?, ?, ?, ?)"
         );
-        $query->execute([$username, $email, $hashedPassword]);
+
+        $query->execute([$username, $email, $hashedPassword, $fullName ?: null]);
     }
 }

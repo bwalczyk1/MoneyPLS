@@ -39,8 +39,12 @@
 
         <form method="POST" action="/register">
             <div class="form-group">
+                <label>Full name</label>
+                <input type="text" name="full_name" placeholder="Jane Doe" required autofocus maxlength="100">
+            </div>
+            <div class="form-group">
                 <label>Username</label>
-                <input type="text" name="username" placeholder="yourname" required autofocus maxlength="50">
+                <input type="text" name="username" placeholder="yourname" required maxlength="50">
             </div>
             <div class="form-group">
                 <label>Email</label>

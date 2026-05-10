@@ -44,12 +44,13 @@ class SecurityController extends AppController {
             return $this->render('auth', ['mode' => 'register']);
         }
 
-        $email    = trim($_POST['email'] ?? '');
+        $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $password2 = $_POST['password2'] ?? '';
         $username = trim($_POST['username'] ?? '');
+        $fullName = trim($_POST['full_name'] ?? '');
 
-        if (empty($email) || empty($password) || empty($username)) {
+        if (empty($email) || empty($password) || empty($username) || empty($fullName)) {
             return $this->render('auth', ['mode' => 'register', 'error' => 'Fill all fields']);
         }
 
@@ -66,7 +67,7 @@ class SecurityController extends AppController {
             return $this->render('auth', ['mode' => 'register', 'error' => 'Email already in use']);
         }
 
-        $repo->createUser($email, password_hash($password, PASSWORD_BCRYPT), $username);
+        $repo->createUser($email, password_hash($password, PASSWORD_BCRYPT), $username, $fullName);
 
         $this->redirect('login');
     }
