@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head><?php include __DIR__ . '/partials/head.html'; ?></head>
+<body class="app-body">
+
+<?php include __DIR__ . '/partials/topbar.html'; ?>
+
+<div class="app-shell">
+  <?php include __DIR__ . '/partials/sidebar.html'; ?>
+
+  <main class="main-content">
+    <div class="page-header">
+      <a href="/groups" class="btn btn--ghost">&larr; Back</a>
+    </div>
+
+    <!-- Group header -->
+    <div class="group-detail-header">
+      <div class="group-detail-icon group-detail-icon--<?= h($group->category) ?>">
+        <?php
+          $icons = ['travel'=>'✈','food'=>'🍔','rent'=>'🏠','entertainment'=>'🎬','general'=>'💼','other'=>'📦'];
+          echo $icons[$group->category] ?? '💼';
+        ?>
+      </div>
+      <div class="group-detail-info">
+        <h1 class="group-detail-name"><?= h($group->name) ?></h1>
+        <span class="group-detail-meta">
+          <?= count($members) ?> member<?= count($members) !== 1 ? 's' : '' ?>
+          &middot; <?= h($group->currency) ?>
+          &middot; Total: <strong><?= h(number_format($total, 2)) ?></strong>
+        </span>
+        <div class="member-avatars">
+          <?php foreach (array_slice($members, 0, 5) as $m): ?>
+            <span class="avatar avatar--sm" title="<?= h($m->username) ?>">
+              <?= h(strtoupper(substr($m->username, 0, 1))) ?>
+            </span>
+          <?php endforeach; ?>
+          <?php if (count($members) > 5): ?>
+            <span class="avatar avatar--sm avatar--more">+<?= count($members) - 5 ?></span>
+          <?php endif; ?>
+        </div>
+      </div>
+      <a href="/groups/<?= h($group->id) ?>/settle" class="btn btn--primary">Settle Up</a>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <a href="/groups/<?= h($group->id) ?>"
+         class="tab <?= ($activeTab ?? 'expenses') === 'expenses' ? 'tab--active' : '' ?>">
+        Expenses
+      </a>
+      <a href="/groups/<?= h($group->id) ?>/balances"
+         class="tab <?= ($activeTab ?? '') === 'balances' ? 'tab--active' : '' ?>">
+        Balances
+      </a>
+    </div>
+
+    <!-- Expenses tab -->
+    <?php if (($activeTab ?? 'expenses') === 'expenses'): ?>
+
+      <?php if (empty($expenses)): ?>
+        <div class="empty-state">
+          <p>No expenses yet.</p>
+        </div>
+      <?php else: ?>
+        <div class="expense-list">
+          <?php
+            $expIcons = ['general'=>'💼','food'=>'🍔','transport'=>'🚌','accommodation'=>'🏨','entertainment'=>'🎬','other'=>'📦'];
+          ?>
+          <?php foreach ($expenses as $exp): ?>
+            <div class="expense-item">
+              <div class="expense-item__icon">
+                <?= $expIcons[$exp['category']] ?? '💼' ?>
+              </div>
+              <div class="expense-item__body">
+                <span class="expense-item__desc"><?= h($exp['description']) ?></span>
+                <span class="expense-item__meta">
+                  Paid by <?= h($exp['paid_by_username']) ?>
+                  &middot; <?= h($exp['expense_date']) ?>
+                </span>
+              </div>
+              <div class="expense-item__amount">
+                <?= h(number_format($exp['amount'], 2)) ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+
+      <a href="/groups/<?= h($group->id) ?>/expenses/add" class="fab">+ Add Expense</a>
+
+    <?php endif; ?>
+
+    <!-- Balances tab -->
+    <?php if (($activeTab ?? '') === 'balances'): ?>
+
+      <?php if (empty($balances)): ?>
+        <div class="empty-state"><p>No balances yet.</p></div>
+      <?php else: ?>
+        <div class="balance-list">
+          <?php foreach ($balances as $uid => $net): ?>
+            <div class="balance-row">
+              <span class="avatar"><?= h(strtoupper(substr($memberMap[$uid] ?? '?', 0, 1))) ?></span>
+              <span class="balance-row__name"><?= h($memberMap[$uid] ?? 'Unknown') ?></span>
+              <span class="balance-row__amount <?= $net >= 0 ? 'amount--positive' : 'amount--negative' ?>">
+                <?= $net >= 0 ? '+' : '' ?><?= h(number_format($net, 2)) ?>
+              </span>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+
+      <a href="/groups/<?= h($group->id) ?>/settle" class="btn btn--primary btn--centered">Settle Up</a>
+
+    <?php endif; ?>
+
+  </main>
+</div>
+
+</body>
+</html>

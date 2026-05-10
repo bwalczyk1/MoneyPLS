@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head><?php include __DIR__ . '/partials/head.html'; ?></head>
+<body class="app-body">
+
+<?php include __DIR__ . '/partials/topbar.html'; ?>
+
+<div class="app-shell">
+  <?php include __DIR__ . '/partials/sidebar.html'; ?>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Groups</h1>
+      <a href="/groups/create" class="btn btn--primary">+ New Group</a>
+    </div>
+
+    <?php if (empty($groupsData)): ?>
+      <div class="empty-state">
+        <p>You have no groups yet.</p>
+        <a href="/groups/create" class="btn btn--primary">Create your first group</a>
+      </div>
+    <?php else: ?>
+      <div class="groups-grid groups-grid--full">
+        <?php foreach ($groupsData as $gd):
+          $group   = $gd['group'];
+          $members = $gd['members'];
+          $total   = $gd['total'];
+          $icons   = ['travel'=>'✈','food'=>'🍔','rent'=>'🏠','entertainment'=>'🎬','general'=>'💼','other'=>'📦'];
+        ?>
+        <a href="/groups/<?= h($group->id) ?>" class="group-card">
+          <div class="group-card__icon group-card__icon--<?= h($group->category) ?>">
+            <?= $icons[$group->category] ?? '💼' ?>
+          </div>
+          <div class="group-card__body">
+            <span class="group-card__name"><?= h($group->name) ?></span>
+            <span class="group-card__meta">
+              <?= count($members) ?> member<?= count($members) !== 1 ? 's' : '' ?>
+              &middot; <?= h($group->currency) ?>
+            </span>
+          </div>
+          <div class="group-card__total">
+            <span class="group-card__total-label">Total spent</span>
+            <span class="group-card__total-amount"><?= h(number_format($total, 2)) ?></span>
+          </div>
+        </a>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </main>
+</div>
+
+</body>
+</html>
