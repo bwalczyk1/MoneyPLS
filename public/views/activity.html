@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head><?php include __DIR__ . '/partials/head.html'; ?></head>
+<body class="app-body">
+
+<?php include __DIR__ . '/partials/topbar.html'; ?>
+
+<div class="app-shell">
+  <?php include __DIR__ . '/partials/sidebar.html'; ?>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Activity</h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <a href="/activity?filter=all"
+         class="filter-btn <?= ($filter ?? 'all') === 'all' ? 'filter-btn--active' : '' ?>">All</a>
+      <a href="/activity?filter=expenses"
+         class="filter-btn <?= ($filter ?? '') === 'expenses' ? 'filter-btn--active' : '' ?>">Expenses</a>
+      <a href="/activity?filter=payments"
+         class="filter-btn <?= ($filter ?? '') === 'payments' ? 'filter-btn--active' : '' ?>">Payments</a>
+    </div>
+
+    <?php if (empty($grouped)): ?>
+      <div class="empty-state">
+        <p>No activity yet.</p>
+      </div>
+    <?php else: ?>
+      <?php
+        $expIcons = ['general'=>'💼','food'=>'🍔','transport'=>'🚌','accommodation'=>'🏨','entertainment'=>'🎬','other'=>'📦'];
+      ?>
+      <?php foreach ($grouped as $label => $items): ?>
+        <div class="activity-group">
+          <h3 class="activity-group__label"><?= h($label) ?></h3>
+          <div class="activity-list">
+            <?php foreach ($items as $item): ?>
+              <div class="activity-item">
+                <?php if ($item['type'] === 'expense'): ?>
+                  <div class="activity-item__icon activity-item__icon--expense">
+                    <?= $expIcons[$item['category'] ?? 'general'] ?? '💼' ?>
+                  </div>
+                  <div class="activity-item__body">
+                    <span class="activity-item__title"><?= h($item['description']) ?></span>
+                    <span class="activity-item__meta">
+                      <?= h($item['group_name']) ?> · paid by <?= h($item['paid_by_username']) ?>
+                    </span>
+                  </div>
+                  <div class="activity-item__amount amount--negative">
+                    −<?= h(number_format($item['amount'], 2)) ?>
+                  </div>
+                <?php else: ?>
+                  <div class="activity-item__icon activity-item__icon--payment">
+                    💸
+                  </div>
+                  <div class="activity-item__body">
+                    <span class="activity-item__title">Payment</span>
+                    <span class="activity-item__meta">
+                      <?= h($item['group_name']) ?> · <?= h($item['from_username']) ?> → <?= h($item['to_username']) ?>
+                      <?php if (!empty($item['note'])): ?>
+                        · <?= h($item['note']) ?>
+                      <?php endif; ?>
+                    </span>
+                  </div>
+                  <div class="activity-item__amount amount--positive">
+                    +<?= h(number_format($item['amount'], 2)) ?>
+                  </div>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+
+  </main>
+</div>
+
+</body>
+</html>
