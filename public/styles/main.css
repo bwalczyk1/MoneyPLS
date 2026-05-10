@@ -618,6 +618,7 @@ input, select, textarea { font-family: inherit; font-size: 15px; }
     display: flex; align-items: center; justify-content: center;
     font-size: 16px; flex-shrink: 0;
 }
+.activity-item__icon--expense { background: var(--primary-light); }
 .activity-item__icon--payment { background: #E8F4FE; }
 .activity-item__body { flex: 1; min-width: 0; }
 .activity-item__title { font-size: 14px; font-weight: 500; display: block; }
