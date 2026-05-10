@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head><?php include __DIR__ . '/partials/head.html'; ?></head>
+<body class="app-body">
+
+<?php include __DIR__ . '/partials/topbar.html'; ?>
+
+<div class="app-shell">
+  <?php include __DIR__ . '/partials/sidebar.html'; ?>
+
+  <main class="main-content">
+    <div class="page-header">
+      <a href="/groups/<?= h($group->id) ?>" class="btn btn--ghost">&larr; Back</a>
+      <h1 class="page-title">Add Expense</h1>
+    </div>
+
+    <div class="form-card">
+      <form method="POST" action="/groups/<?= h($group->id) ?>/expenses/add">
+
+        <div class="form-group">
+          <label class="form-label" for="description">Description</label>
+          <input
+            class="form-input <?= isset($errors['description']) ? 'form-input--error' : '' ?>"
+            type="text" id="description" name="description"
+            value="<?= h($old['description'] ?? '') ?>"
+            placeholder="e.g. Dinner at restaurant"
+            maxlength="200"
+          >
+          <?php if (isset($errors['description'])): ?>
+            <span class="form-error"><?= h($errors['description']) ?></span>
+          <?php endif; ?>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="amount">Amount (<?= h($group->currency) ?>)</label>
+            <input
+              class="form-input <?= isset($errors['amount']) ? 'form-input--error' : '' ?>"
+              type="number" id="amount" name="amount" step="0.01" min="0.01"
+              value="<?= h($old['amount'] ?? '') ?>"
+              placeholder="0.00"
+            >
+            <?php if (isset($errors['amount'])): ?>
+              <span class="form-error"><?= h($errors['amount']) ?></span>
+            <?php endif; ?>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="category">Category</label>
+            <select class="form-input" id="category" name="category">
+              <?php foreach ($categories as $cat): ?>
+                <option value="<?= h($cat) ?>" <?= ($old['category'] ?? 'general') === $cat ? 'selected' : '' ?>>
+                  <?= h(ucfirst($cat)) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="paid_by">Paid by</label>
+            <select class="form-input" id="paid_by" name="paid_by">
+              <?php foreach ($members as $m): ?>
+                <option value="<?= h($m->id) ?>"
+                  <?= (int)($old['paid_by'] ?? $userId) === $m->id ? 'selected' : '' ?>>
+                  <?= h($m->username) ?><?= $m->id === $userId ? ' (you)' : '' ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="expense_date">Date</label>
+            <input
+              class="form-input"
+              type="date" id="expense_date" name="expense_date"
+              value="<?= h($old['expense_date'] ?? date('Y-m-d')) ?>"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Split type</label>
+          <div class="split-type-group">
+            <label class="split-type-option">
+              <input type="radio" name="split_type" value="equal"
+                <?= ($old['split_type'] ?? 'equal') === 'equal' ? 'checked' : '' ?>>
+              Equal
+            </label>
+            <label class="split-type-option">
+              <input type="radio" name="split_type" value="custom"
+                <?= ($old['split_type'] ?? '') === 'custom' ? 'checked' : '' ?>>
+              Custom
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Split between</label>
+          <?php if (isset($errors['split_between'])): ?>
+            <span class="form-error"><?= h($errors['split_between']) ?></span>
+          <?php endif; ?>
+          <div class="members-list" id="split-between-list">
+            <?php foreach ($members as $m): ?>
+              <label class="member-item">
+                <input
+                  type="checkbox" name="split_between[]"
+                  value="<?= h($m->id) ?>"
+                  <?= !isset($old['split_between']) || in_array((string)$m->id, $old['split_between'] ?? []) ? 'checked' : '' ?>
+                >
+                <span class="member-avatar"><?= h(strtoupper(substr($m->username, 0, 1))) ?></span>
+                <span class="member-name"><?= h($m->username) ?></span>
+                <input
+                  type="number" name="custom_share_<?= h($m->id) ?>"
+                  class="form-input form-input--custom-share"
+                  step="0.01" min="0"
+                  value="<?= h($old["custom_share_{$m->id}"] ?? '') ?>"
+                  placeholder="0.00"
+                  style="display:none"
+                >
+              </label>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/groups/<?= h($group->id) ?>" class="btn btn--ghost">Cancel</a>
+          <button type="submit" class="btn btn--primary">Add Expense</button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var radios = document.querySelectorAll('input[name="split_type"]');
+  var customInputs = document.querySelectorAll('.form-input--custom-share');
+
+  function toggle() {
+    var isCustom = document.querySelector('input[name="split_type"]:checked').value === 'custom';
+    customInputs.forEach(function (el) { el.style.display = isCustom ? 'block' : 'none'; });
+  }
+
+  radios.forEach(function (r) { r.addEventListener('change', toggle); });
+  toggle();
+}());
+</script>
+
+</body>
+</html>
