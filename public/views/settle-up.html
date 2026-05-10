@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head><?php include __DIR__ . '/partials/head.html'; ?></head>
+<body class="app-body">
+
+<?php include __DIR__ . '/partials/topbar.html'; ?>
+
+<div class="app-shell">
+  <?php include __DIR__ . '/partials/sidebar.html'; ?>
+
+  <main class="main-content">
+    <div class="page-header">
+      <a href="/groups/<?= h($group->id) ?>" class="btn btn--ghost">&larr; Back</a>
+      <h1 class="page-title">Settle Up — <?= h($group->name) ?></h1>
+    </div>
+
+    <?php if (empty($suggestions)): ?>
+      <div class="empty-state">
+        <p>Everyone is settled up!</p>
+      </div>
+    <?php else: ?>
+      <div class="settle-list">
+        <?php foreach ($suggestions as $s): ?>
+          <div class="settle-item">
+            <div class="settle-item__info">
+              <span class="avatar"><?= h(strtoupper(substr($s['from_username'], 0, 1))) ?></span>
+              <div class="settle-item__text">
+                <span class="settle-item__names">
+                  <strong><?= h($s['from_username']) ?></strong>
+                  owes
+                  <strong><?= h($s['to_username']) ?></strong>
+                </span>
+                <span class="settle-item__amount"><?= h(number_format($s['amount'], 2)) ?> <?= h($group->currency) ?></span>
+              </div>
+            </div>
+
+            <?php if ((int)$s['from_user_id'] === $userId): ?>
+              <form method="POST" action="/groups/<?= h($group->id) ?>/settle/pay">
+                <input type="hidden" name="to_user_id" value="<?= h($s['to_user_id']) ?>">
+                <input type="hidden" name="amount" value="<?= h($s['amount']) ?>">
+                <button type="submit" class="btn btn--primary btn--sm">Mark as Settled</button>
+              </form>
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </main>
+</div>
+
+</body>
+</html>
