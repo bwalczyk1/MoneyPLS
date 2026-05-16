@@ -84,10 +84,13 @@ class ExpensesRepository extends Repository {
                 e.id,
                 e.description,
                 e.amount,
+                e.category,
                 e.created_at,
                 g.name AS group_name,
                 g.id AS group_id,
-                u.username AS actor
+                u.username AS paid_by_username,
+                NULL AS from_username,
+                NULL AS to_username
             FROM expenses e
             JOIN groups g ON g.id = e.group_id
             JOIN group_members gm ON gm.group_id = g.id AND gm.user_id = :uid1
@@ -100,14 +103,18 @@ class ExpensesRepository extends Repository {
                 p.id,
                 COALESCE(p.note, 'Settlement') AS description,
                 p.amount,
+                NULL AS category,
                 p.created_at,
                 g.name AS group_name,
                 g.id AS group_id,
-                u.username AS actor
+                NULL AS paid_by_username,
+                u_from.username AS from_username,
+                u_to.username AS to_username
             FROM payments p
             JOIN groups g ON g.id = p.group_id
             JOIN group_members gm ON gm.group_id = g.id AND gm.user_id = :uid2
-            JOIN users u ON u.id = p.from_user_id
+            JOIN users u_from ON u_from.id = p.from_user_id
+            JOIN users u_to ON u_to.id = p.to_user_id
 
             ORDER BY created_at DESC
             LIMIT :lim
