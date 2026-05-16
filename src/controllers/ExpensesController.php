@@ -79,6 +79,23 @@ class ExpensesController extends AppController {
                 $customAmount = (float)($_POST["custom_share_{$uid}"] ?? 0);
                 $shares[] = ['user_id' => $uid, 'share_amount' => $customAmount];
             }
+
+            $sharesSum = array_sum(array_column($shares, 'share_amount'));
+
+            if (abs($sharesSum - $amount) > 0.01) {
+                $this->render('expense-form', [
+                    'pageTitle'  => 'Add Expense — MoneyPLS',
+                    'activePage' => 'groups',
+                    'group'      => $group,
+                    'members'    => $members,
+                    'categories' => Expense::categories(),
+                    'userId'     => $userId,
+                    'errors'     => ['split_between' => 'Custom shares must add up to the total amount'],
+                    'old'        => $_POST,
+                ]);
+
+                return;
+            }
         }
 
         (new ExpensesRepository())->createExpense($expense, $shares);
