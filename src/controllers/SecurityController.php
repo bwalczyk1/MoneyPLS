@@ -51,20 +51,20 @@ class SecurityController extends AppController {
         $fullName = trim($_POST['full_name'] ?? '');
 
         if (empty($email) || empty($password) || empty($username) || empty($fullName)) {
-            return $this->render('auth', ['mode' => 'register', 'error' => 'Fill all fields']);
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Fill all fields', 'old' => $_POST]);
         }
 
         if ($password !== $password2) {
-            return $this->render('auth', ['mode' => 'register', 'error' => 'Passwords do not match']);
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Passwords do not match', 'old' => $_POST]);
         }
 
         if (strlen($password) < 8) {
-            return $this->render('auth', ['mode' => 'register', 'error' => 'Password must be at least 8 characters']);
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Password must be at least 8 characters', 'old' => $_POST]);
         }
 
         $repo = new UsersRepository();
         if ($repo->getUserByEmail($email)) {
-            return $this->render('auth', ['mode' => 'register', 'error' => 'Email already in use']);
+            return $this->render('auth', ['mode' => 'register', 'error' => 'Email already in use', 'old' => $_POST]);
         }
 
         $repo->createUser($email, password_hash($password, PASSWORD_BCRYPT), $username, $fullName);
