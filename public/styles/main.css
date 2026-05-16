@@ -525,6 +525,7 @@ input, select, textarea { font-family: inherit; font-size: 15px; }
 .empty-state { text-align: center; padding: 48px 24px; color: var(--text-light); }
 .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
 .empty-state p { font-size: 15px; }
+.empty-state > * + * { margin-top: 16px; }
 .alert-success {
     background: var(--primary-light); color: var(--primary-dark);
     border-radius: 8px; padding: 10px 14px;
