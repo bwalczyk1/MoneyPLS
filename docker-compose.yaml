@@ -21,6 +21,7 @@ services:
     networks:
       - pg-network
     volumes:
+      - pg-data:/var/lib/postgresql/data
       - ./docker/db:/docker-entrypoint-initdb.d
   
   php:
@@ -42,9 +43,12 @@ services:
       - "5050:80"
     networks:
       - pg-network
-  
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
 networks:
   pg-network:
 
 volumes:
   pg-data:
+  pgadmin-data:
