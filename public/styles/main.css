@@ -729,6 +729,10 @@ input, select, textarea { font-family: inherit; font-size: 15px; }
 .group-detail-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
 .group-detail-meta { font-size: 13px; color: var(--text-light); display: block; }
 
+.no-valid {
+    border-color: #E94560 !important;
+}
+
 /* === Responsive === */
 @media (max-width: 768px) {
     .sidebar { display: none; }
