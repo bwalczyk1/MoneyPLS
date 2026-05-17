@@ -17,11 +17,13 @@ class GroupsController extends AppController {
 
     public function index($id = null): void {
         $this->requireAuth();
+
         $userId = $_SESSION['user_id'];
         $repo = new GroupsRepository();
         $groups = $repo->getGroupsForUser($userId);
 
         $groupsData = [];
+
         foreach ($groups as $group) {
             $members = $repo->getMembersForGroup($group->id);
             $total   = $repo->getTotalSpentForGroup($group->id);
@@ -37,6 +39,7 @@ class GroupsController extends AppController {
 
     public function show($id): void {
         $this->requireAuth();
+
         $userId = (int)$_SESSION['user_id'];
         $groupId = (int)$id;
 
@@ -45,6 +48,7 @@ class GroupsController extends AppController {
 
         if (!$group || !$repo->isMember($groupId, $userId)) {
             include 'public/views/404.html';
+
             return;
         }
 
@@ -69,6 +73,7 @@ class GroupsController extends AppController {
 
     public function showBalances($id): void {
         $this->requireAuth();
+
         $userId  = (int)$_SESSION['user_id'];
         $groupId = (int)$id;
 
@@ -86,6 +91,7 @@ class GroupsController extends AppController {
         $balances = $balRepo->getGroupBalances($groupId);
 
         $memberMap = [];
+
         foreach ($members as $m) {
             $memberMap[$m->id] = $m->username;
         }
@@ -117,6 +123,7 @@ class GroupsController extends AppController {
                 'categories' => Group::categories(),
                 'currencies' => Group::currencies(),
             ]);
+
             return;
         }
 
@@ -139,6 +146,7 @@ class GroupsController extends AppController {
                 'errors'     => $group->getErrors(),
                 'old'        => $_POST,
             ]);
+
             return;
         }
 

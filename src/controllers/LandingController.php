@@ -9,6 +9,7 @@ class LandingController extends AppController {
         if (is_null(self::$instance)) {
             self::$instance = new LandingController();
         }
+
         return self::$instance;
     }
 
@@ -16,6 +17,7 @@ class LandingController extends AppController {
         if (!empty($_SESSION['user_id'])) {
             $this->redirect('dashboard');
         }
+
         $this->render('landing', ['pageTitle' => 'MoneyPLS — Split expenses, not friendships']);
     }
 }

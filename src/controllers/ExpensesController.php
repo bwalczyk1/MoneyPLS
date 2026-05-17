@@ -12,11 +12,13 @@ class ExpensesController extends AppController {
         if (is_null(self::$instance)) {
             self::$instance = new ExpensesController();
         }
+
         return self::$instance;
     }
 
     public function create($groupId): void {
         $this->requireAuth();
+
         $userId  = (int)$_SESSION['user_id'];
         $groupId = (int)$groupId;
 
@@ -39,6 +41,7 @@ class ExpensesController extends AppController {
                 'categories' => Expense::categories(),
                 'userId'     => $userId,
             ]);
+
             return;
         }
 
@@ -54,9 +57,11 @@ class ExpensesController extends AppController {
 
         if (!$expense->validate() || empty($splitBetween)) {
             $errors = $expense->getErrors();
+
             if (empty($splitBetween)) {
                 $errors['split_between'] = 'Select at least one person';
             }
+
             $this->render('expense-form', [
                 'pageTitle'  => 'Add Expense — MoneyPLS',
                 'activePage' => 'groups',
@@ -67,6 +72,7 @@ class ExpensesController extends AppController {
                 'errors'     => $errors,
                 'old'        => $_POST,
             ]);
+
             return;
         }
 

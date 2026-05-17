@@ -10,11 +10,13 @@ class ActivityController extends AppController {
         if (is_null(self::$instance)) {
             self::$instance = new ActivityController();
         }
+
         return self::$instance;
     }
 
     public function index($id = null): void {
         $this->requireAuth();
+
         $userId = (int)$_SESSION['user_id'];
         $filter = $_GET['filter'] ?? 'all';
 
@@ -33,13 +35,13 @@ class ActivityController extends AppController {
 
         foreach ($items as $item) {
             $date = substr($item['created_at'], 0, 10);
-            if ($date === $today) {
-                $label = 'Today';
-            } elseif ($date === $yesterday) {
-                $label = 'Yesterday';
-            } else {
-                $label = date('M j', strtotime($date));
+
+            $label = match($date) {
+                $today => 'Today',
+                $yesterday => 'Yesterday',
+                default => date('M j', strtotime($date)),
             }
+
             $grouped[$label][] = $item;
         }
 

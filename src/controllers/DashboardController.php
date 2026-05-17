@@ -11,6 +11,7 @@ class DashboardController extends AppController {
         if (is_null(self::$instance)) {
             self::$instance = new DashboardController();
         }
+
         return self::$instance;
     }
 
@@ -22,10 +23,12 @@ class DashboardController extends AppController {
         $groups    = $groupRepo->getGroupsForUser($userId);
 
         $groupsData = [];
+
         foreach (array_slice($groups, 0, 6) as $group) {
             $members  = $groupRepo->getMembersForGroup($group->id);
             $balances = (new BalancesRepository())->getGroupBalances($group->id);
             $userNet  = $balances[$userId] ?? 0;
+
             $groupsData[] = [
                 'group'   => $group,
                 'members' => $members,

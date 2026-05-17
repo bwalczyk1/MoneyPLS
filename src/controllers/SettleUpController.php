@@ -13,6 +13,7 @@ class SettleUpController extends AppController {
         if (is_null(self::$instance)) {
             self::$instance = new SettleUpController();
         }
+
         return self::$instance;
     }
 
