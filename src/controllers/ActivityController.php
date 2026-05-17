@@ -40,7 +40,7 @@ class ActivityController extends AppController {
                 $today => 'Today',
                 $yesterday => 'Yesterday',
                 default => date('M j', strtotime($date)),
-            }
+            };
 
             $grouped[$label][] = $item;
         }

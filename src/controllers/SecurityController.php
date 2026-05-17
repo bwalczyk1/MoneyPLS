@@ -62,7 +62,7 @@ class SecurityController extends AppController {
             $password !== $password2 => 'Passwords do not match',
             strlen($password) < 8 => 'Password must be at least 8 characters',
             default => '',
-        }
+        };
 
         if (!empty($error)) {
             http_response_code(400);
