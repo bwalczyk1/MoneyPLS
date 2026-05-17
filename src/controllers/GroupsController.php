@@ -47,7 +47,7 @@ class GroupsController extends AppController {
         $group = $repo->getGroupById($groupId);
 
         if (!$group || !$repo->isMember($groupId, $userId)) {
-            include 'public/views/404.html';
+            $this->notFound();
 
             return;
         }
@@ -81,7 +81,7 @@ class GroupsController extends AppController {
         $group = $repo->getGroupById($groupId);
 
         if (!$group || !$repo->isMember($groupId, $userId)) {
-            include 'public/views/404.html';
+            $this->notFound();
             return;
         }
 

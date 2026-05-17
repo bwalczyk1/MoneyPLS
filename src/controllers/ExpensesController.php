@@ -26,7 +26,7 @@ class ExpensesController extends AppController {
         $group     = $groupRepo->getGroupById($groupId);
 
         if (!$group || !$groupRepo->isMember($groupId, $userId)) {
-            include 'public/views/404.html';
+            $this->notFound();
             return;
         }
 
@@ -62,6 +62,7 @@ class ExpensesController extends AppController {
                 $errors['split_between'] = 'Select at least one person';
             }
 
+            http_response_code(400);
             $this->render('expense-form', [
                 'pageTitle'  => 'Add Expense — MoneyPLS',
                 'activePage' => 'groups',
@@ -89,6 +90,7 @@ class ExpensesController extends AppController {
             $sharesSum = array_sum(array_column($shares, 'share_amount'));
 
             if (abs($sharesSum - $amount) > 0.01) {
+                http_response_code(400);
                 $this->render('expense-form', [
                     'pageTitle'  => 'Add Expense — MoneyPLS',
                     'activePage' => 'groups',

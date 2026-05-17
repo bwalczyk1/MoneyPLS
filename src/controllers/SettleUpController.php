@@ -26,7 +26,7 @@ class SettleUpController extends AppController {
         $group     = $groupRepo->getGroupById($groupId);
 
         if (!$group || !$groupRepo->isMember($groupId, $userId)) {
-            include 'public/views/404.html';
+            $this->notFound();
             return;
         }
 
@@ -50,7 +50,7 @@ class SettleUpController extends AppController {
         $group     = $groupRepo->getGroupById($groupId);
 
         if (!$group || !$groupRepo->isMember($groupId, $userId)) {
-            include 'public/views/404.html';
+            $this->notFound();
             return;
         }
 

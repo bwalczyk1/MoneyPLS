@@ -20,6 +20,11 @@ class AppController {
         }
     }
 
+    protected function notFound(): void {
+        http_response_code(404);
+        include 'public/views/404.html';
+    }
+
     protected function redirect(string $path): void {
         header("Location: http://{$_SERVER['HTTP_HOST']}/{$path}");
         exit;
@@ -34,9 +39,7 @@ class AppController {
             include $templatePath;
             echo ob_get_clean();
         } else {
-            ob_start();
-            include 'public/views/404.html';
-            echo ob_get_clean();
+            $this->notFound();
         }
     }
 }

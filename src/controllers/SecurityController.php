@@ -23,6 +23,7 @@ class SecurityController extends AppController {
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
+            http_response_code(400);
             return $this->render('auth', ['mode' => 'login', 'error' => 'Fill all fields']);
         }
 
@@ -30,6 +31,8 @@ class SecurityController extends AppController {
         $user = $repo->getUserByEmail($email);
 
         if (!$user || !password_verify($password, $user->password)) {
+            http_response_code(401);
+
             return $this->render(
                 'auth',
                 ['mode' => 'login', 'error' => 'Invalid email or password'],
@@ -62,6 +65,8 @@ class SecurityController extends AppController {
         }
 
         if (!empty($error)) {
+            http_response_code(400);
+
             return $this->render('auth', [
                 'mode' => 'register',
                 'error' => $error,
@@ -72,6 +77,8 @@ class SecurityController extends AppController {
         $repo = new UsersRepository();
 
         if ($repo->getUserByEmail($email)) {
+            http_response_code(400);
+
             return $this->render('auth', [
                 'mode' => 'register',
                 'error' => 'Email already in use',
