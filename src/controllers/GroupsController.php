@@ -114,12 +114,9 @@ class GroupsController extends AppController {
         $userId = (int)$_SESSION['user_id'];
 
         if ($this->isGet()) {
-            require_once __DIR__ . '/../repositories/UsersRepository.php';
-            $users = (new UsersRepository())->getUsers();
             $this->render('group-form', [
                 'pageTitle'  => 'New Group — MoneyPLS',
                 'activePage' => 'groups',
-                'users'      => $users,
                 'categories' => Group::categories(),
                 'currencies' => Group::currencies(),
             ]);
@@ -135,12 +132,10 @@ class GroupsController extends AppController {
         $group = new Group($name, $category, $currency, $userId);
 
         if (!$group->validate()) {
-            require_once __DIR__ . '/../repositories/UsersRepository.php';
-            $users = (new UsersRepository())->getUsers();
+            http_response_code(400);
             $this->render('group-form', [
                 'pageTitle'  => 'New Group — MoneyPLS',
                 'activePage' => 'groups',
-                'users'      => $users,
                 'categories' => Group::categories(),
                 'currencies' => Group::currencies(),
                 'errors'     => $group->getErrors(),

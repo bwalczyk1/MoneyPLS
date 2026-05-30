@@ -7,6 +7,7 @@ require_once 'src/controllers/GroupsController.php';
 require_once 'src/controllers/ExpensesController.php';
 require_once 'src/controllers/SettleUpController.php';
 require_once 'src/controllers/ActivityController.php';
+require_once 'src/controllers/UsersController.php';
 
 class Routing {
 
@@ -42,6 +43,10 @@ class Routing {
         "activity" => [
             "controller" => "ActivityController",
             "action" => "index"
+        ],
+        "api/users" => [
+            "controller" => "UsersController",
+            "action" => "search"
         ],
     ];
 

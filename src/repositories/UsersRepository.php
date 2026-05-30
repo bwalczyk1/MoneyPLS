@@ -28,6 +28,26 @@ class UsersRepository extends Repository {
         return $row ? User::fromArray($row) : null;
     }
 
+    public function searchUsers(
+        string $search,
+        int $limit = 10,
+        int $excludeId = 0,
+    ): array {
+        $query = $this->database->connect()->prepare("
+            SELECT id, username FROM users
+            WHERE username ILIKE :search AND id != :exclude
+            ORDER BY username
+            LIMIT :limit
+        ");
+
+        $pattern = '%' . $search . '%';
+        $query->bindParam(':search', $pattern);
+        $query->bindParam(':exclude', $excludeId, PDO::PARAM_INT);
+        $query->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function createUser(
         string $email,
         string $hashedPassword,
