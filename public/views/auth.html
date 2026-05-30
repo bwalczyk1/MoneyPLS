@@ -24,6 +24,7 @@
         <?php if (($mode ?? 'login') === 'login'): ?>
 
         <form method="POST" action="/login">
+            <input type="hidden" name="_csrf" value="<?= h(csrf_token()) ?>">
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" name="email" placeholder="you@example.com" required autofocus>
@@ -38,6 +39,7 @@
         <?php else: ?>
 
         <form method="POST" action="/register">
+            <input type="hidden" name="_csrf" value="<?= h(csrf_token()) ?>">
             <div class="form-group">
                 <label>Full name</label>
                 <input type="text" name="full_name" placeholder="Jane Doe" required autofocus maxlength="100" value="<?= h($old['full_name'] ?? '') ?>">

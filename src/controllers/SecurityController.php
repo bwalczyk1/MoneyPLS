@@ -19,6 +19,7 @@ class SecurityController extends AppController {
             return $this->render('auth', ['mode' => 'login']);
         }
 
+        $this->verifyCsrf();
         $email    = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
@@ -51,6 +52,7 @@ class SecurityController extends AppController {
             return $this->render('auth', ['mode' => 'register']);
         }
 
+        $this->verifyCsrf();
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $password2 = $_POST['password2'] ?? '';
