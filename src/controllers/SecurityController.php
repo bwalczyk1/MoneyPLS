@@ -61,8 +61,14 @@ class SecurityController extends AppController {
 
         $error = match(true) {
             empty($email) || empty($password) || empty($username) || empty($fullName) => 'Fill all fields',
-            $password !== $password2 => 'Passwords do not match',
+            strlen($email) > 255 => 'Email is too long (max 255 characters)',
+            !filter_var($email, FILTER_VALIDATE_EMAIL) => 'Invalid email address',
+            strlen($username) > 50 => 'Username is too long (max 50 characters)',
+            strlen($fullName) > 100 => 'Full name is too long (max 100 characters)',
             strlen($password) < 8 => 'Password must be at least 8 characters',
+            !preg_match('/[A-Z]/', $password) => 'Password must contain at least one uppercase letter',
+            !preg_match('/[0-9]/', $password) => 'Password must contain at least one digit',
+            $password !== $password2 => 'Passwords do not match',
             default => '',
         };
 
