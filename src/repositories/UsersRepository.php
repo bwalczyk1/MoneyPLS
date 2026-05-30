@@ -19,7 +19,7 @@ class UsersRepository extends Repository {
     public function getUserByEmail(string $email): ?User
     {
         $query = $this->database->connect()->prepare(
-            "SELECT * FROM users WHERE email = :email"
+            "SELECT id, username, password FROM users WHERE email = :email"
         );
         $query->bindParam(':email', $email);
         $query->execute();

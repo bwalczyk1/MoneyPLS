@@ -59,7 +59,7 @@ class GroupsRepository extends Repository {
 
     public function getMembersForGroup(int $groupId): array {
         $query = $this->database->connect()->prepare("
-            SELECT u.* FROM users u
+            SELECT u.id, u.username FROM users u
             JOIN group_members gm ON gm.user_id = u.id
             WHERE gm.group_id = :group_id
             ORDER BY gm.joined_at ASC
